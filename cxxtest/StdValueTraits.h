@@ -69,7 +69,7 @@ class ValueTraits<const CXXTEST_STD(string)> : public StdTraitsBase {
     static bool is_mb ( const CXXTEST_STD(string) &s, unsigned i ) {
         if( !mb_start(s[i]) || i + mb_length(s[i]) > s.length() )
             return false;
-        for ( unsigned len = mb_length(s[i]); len > 0; -- len, ++ i ) {
+        for ( unsigned len = (unsigned)mb_length(s[i]); len > 0; -- len, ++ i ) {
             if ( !mb_partial(s[i]) )
                 return false;
         }
@@ -81,7 +81,7 @@ public:
         *this << "\"";
         for ( unsigned i = 0; i < s.length(); ++ i ) {
             if(is_mb(s, i)) {
-                for ( unsigned len = mb_length(s[i]); len > 0; -- len, ++ i ) {
+                for ( unsigned len = (unsigned)mb_length(s[i]); len > 0; -- len, ++ i ) {
                     char c[2] = { s[i], '\0' };
                     *this << c;
                 }

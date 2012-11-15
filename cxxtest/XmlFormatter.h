@@ -381,8 +381,8 @@ public:
                                const char *x, const char *y, const char *z) {
         testFailure(file, line, "failedAssertEqualsTol")
         << "Error: Expected ("
-        << xStr << " == " << yStr << " within " << zStr << "), found ("
-        << x << " != " << y << " within " << z << ")";
+        << xStr << " == " << yStr << " within tolerance " << zStr << "), found ("
+        << x << " != " << y << " within tolerance " << z << ")";
     }
     
     void failedAssertSameData(const char *file, int line,

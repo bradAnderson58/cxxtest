@@ -72,6 +72,30 @@ void doAssertEquals(const char *file, int line,
     }
 }
 
+// hacked together by David
+template<class X, class Y, class Z>
+struct equalsTol {
+    static bool test(X x, Y y, Z z) {
+        return (::abs(x - y) <= z);
+    }
+};
+ 
+template<class X, class Y, class Z>
+void doAssertEqualsTol(const char *file, int line,
+                       const char *xExpr, X x,
+                       const char *yExpr, Y y,
+                       const char *zExpr, Z z,
+                       const char *message) {
+    if (!equalsTol<X, Y, Z>::test(x, y, z)) {
+        if (message) {
+            tracker().failedTest(file, line, message);
+        }
+        tracker().failedAssertEqualsTol(file, line, xExpr, yExpr, zExpr, TS_AS_STRING(x), TS_AS_STRING(y), TS_AS_STRING(z));
+            TS_ABORT();
+    }
+}
+    
+
 bool sameData(const void *x, const void *y, unsigned size);
 
 void doAssertSameData(const char *file, int line,
@@ -297,6 +321,22 @@ void doAssertSameFiles(const char* file, int line,
 #   define ETSM_ASSERT_EQUALS(m,x,y) _ETSM_ASSERT_EQUALS(__FILE__,__LINE__,m,x,y)
 #   define TSM_ASSERT_EQUALS(m,x,y) _TSM_ASSERT_EQUALS(__FILE__,__LINE__,m,x,y)
 
+    // TS_ASSERT_EQUALS_TOL
+#   define ___ETS_ASSERT_EQUALS_TOL(f,l,x,y,z,m) CxxTest::doAssertEqualsTol( (f), (l), #x, (x), #y, (y), #z, (z), (m) )
+#   define ___TS_ASSERT_EQUALS_TOL(f,l,x,y,z,m) { _TS_TRY { ___ETS_ASSERT_EQUALS_TOL(f,l,x,y,z,m); } __TS_CATCH(f,l) }
+    
+#   define _ETS_ASSERT_EQUALS_TOL(f,l,x,y,z) ___ETS_ASSERT_EQUALS_TOL(f,l,x,y,z,0)
+#   define _TS_ASSERT_EQUALS_TOL(f,l,x,y,z) ___TS_ASSERT_EQUALS_TOL(f,l,x,y,z,0)
+    
+#   define ETS_ASSERT_EQUALS_TOL(x,y,z) _ETS_ASSERT_EQUALS_TOL(__FILE__,__LINE__,x,y,z)
+#   define TS_ASSERT_EQUALS_TOL(x,y,z) _TS_ASSERT_EQUALS_TOL(__FILE__,__LINE__,x,y,z)
+    
+#   define _ETSM_ASSERT_EQUALS_TOL(f,l,m,x,y,z) ___ETS_ASSERT_EQUALS_TOL(f,l,x,y,z,TS_AS_STRING(m))
+#   define _TSM_ASSERT_EQUALS_TOL(f,l,m,x,y,z) ___TS_ASSERT_EQUALS_TOL(f,l,x,y,z,TS_AS_STRING(m))
+    
+#   define ETSM_ASSERT_EQUALS_TOL(m,x,y,z) _ETSM_ASSERT_EQUALS_TOL(__FILE__,__LINE__,m,x,y,z)
+#   define TSM_ASSERT_EQUALS_TOL(m,x,y,z) _TSM_ASSERT_EQUALS_TOL(__FILE__,__LINE__,m,x,y,z)
+    
 // TS_ASSERT_SAME_DATA
 #   define ___ETS_ASSERT_SAME_DATA(f,l,x,y,s,m) CxxTest::doAssertSameData( (f), (l), #x, (x), #y, (y), #s, (s), (m) )
 #   define ___TS_ASSERT_SAME_DATA(f,l,x,y,s,m) { _TS_TRY { ___ETS_ASSERT_SAME_DATA(f,l,x,y,s,m); } __TS_CATCH(f,l) }
@@ -461,6 +501,10 @@ void doAssertSameFiles(const char* file, int line,
 #   define TS_ASSERT_THROWS_EQUALS(e,t,x,y) TS_ASSERT_THROWS_ASSERT(e,t,TS_ASSERT_EQUALS(x,y))
 #   define TSM_ASSERT_THROWS_EQUALS(m,e,t,x,y) TSM_ASSERT_THROWS_ASSERT(m,e,t,TSM_ASSERT_EQUALS(m,x,y))
 
+// TS_ASSERT_THROWS_EQUALS_TOL
+#   define TS_ASSERT_THROWS_EQUALS_TOL(e,t,x,y) TS_ASSERT_THROWS_ASSERT(e,t,TS_ASSERT_EQUALS_TOL(x,y))
+#   define TSM_ASSERT_THROWS_EQUALS_TOL(m,e,t,x,y) TSM_ASSERT_THROWS_ASSERT(m,e,t,TSM_ASSERT_EQUALS_TOL(m,x,y))
+    
 // TS_ASSERT_THROWS_DIFFERS
 #   define TS_ASSERT_THROWS_DIFFERS(e,t,x,y) TS_ASSERT_THROWS_ASSERT(e,t,TS_ASSERT_DIFFERS(x,y))
 #   define TSM_ASSERT_THROWS_DIFFERS(m,e,t,x,y) TSM_ASSERT_THROWS_ASSERT(m,e,t,TSM_ASSERT_DIFFERS(m,x,y))

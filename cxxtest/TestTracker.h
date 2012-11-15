@@ -62,6 +62,9 @@ public:
     void failedAssertEquals(const char *file, int line,
                             const char *xStr, const char *yStr,
                             const char *x, const char *y);
+    void failedAssertEqualsTol(const char *file, int line,
+                               const char *xStr, const char *yStr, const char* zStr,
+                               const char *x, const char *y, const char* z);
     void failedAssertSameData(const char *file, int line,
                               const char *xStr, const char *yStr,
                               const char *sizeStr, const void *x,

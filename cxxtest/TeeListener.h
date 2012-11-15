@@ -80,6 +80,13 @@ public:
         _second->failedAssertEquals(file, line, xStr, yStr, x, y);
     }
 
+    void failedAssertEqualsTol(const char *file, int line,
+                               const char *xStr, const char *yStr, const char *zStr,
+                               const char *x, const char *y, const char *z) {
+        _first->failedAssertEqualsTol(file, line, xStr, yStr, zStr, x, y, z);
+        _second->failedAssertEqualsTol(file, line, xStr, yStr, zStr, x, y, z);
+    }
+    
     void failedAssertSameData(const char *file, int line,
                               const char *xStr, const char *yStr,
                               const char *sizeStr, const void *x,

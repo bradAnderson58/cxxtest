@@ -132,6 +132,14 @@ void TestTracker::failedAssertEquals(const char *file, int line,
     _l->failedAssertEquals(file, line, xStr, yStr, x, y);
 }
 
+void TestTracker::failedAssertEqualsTol(const char *file, int line,
+                                        const char *xStr, const char *yStr, const char* zStr,
+                                        const char *x, const char *y, const char* z)
+{
+    countFailure();
+    _l->failedAssertEqualsTol(file, line, xStr, yStr, zStr, x, y, z);
+}
+    
 void TestTracker::failedAssertSameData(const char *file, int line,
                                        const char *xStr, const char *yStr,
                                        const char *sizeStr, const void *x,

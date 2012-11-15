@@ -71,6 +71,12 @@ public:
         redBarSafe();
     }
 
+    void failedAssertEqualsTol(const char * /*file*/, int /*line*/,
+                               const char * /*xStr*/, const char * /*yStr*/, const char * /*zStr*/,
+                               const char * /*x*/, const char * /*y*/, const char * /*y*/) {
+        redBarSafe();
+    }
+    
     void failedAssertSameData(const char * /*file*/, int /*line*/,
                               const char * /*xStr*/, const char * /*yStr*/,
                               const char * /*sizeStr*/, const void * /*x*/,

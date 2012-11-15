@@ -128,6 +128,14 @@ public:
                          x << " != " << y << ")" << endl;
     }
 
+    void failedAssertEqualsTol(const char *file, int line,
+                               const char *xStr, const char *yStr, const char *zStr,
+                               const char *x, const char *y, const char *z) {
+        stop(file, line) << _errorString << ": Expected (" <<
+        xStr << " == " << yStr << " within " << zStr << "), found (" <<
+        x << " != " << y << " within " << z << ")" << endl;
+    }
+    
     void failedAssertSameData(const char *file, int line,
                               const char *xStr, const char *yStr,
                               const char *sizeStr, const void *x,

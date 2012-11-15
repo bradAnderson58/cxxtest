@@ -376,6 +376,15 @@ public:
                 << x << " != " << y << ")";
     }
 
+    void failedAssertEqualsTol(const char *file, int line,
+                               const char* xStr, const char* yStr, const char* zStr,
+                               const char *x, const char *y, const char *z) {
+        testFailure(file, line, "failedAssertEqualsTol")
+        << "Error: Expected ("
+        << xStr << " == " << yStr << " within " << zStr << "), found ("
+        << x << " != " << y << " within " << z << ")";
+    }
+    
     void failedAssertSameData(const char *file, int line,
                               const char *xStr, const char *yStr, const char *sizeStr,
                               const void* /*x*/, const void* /*y*/, unsigned size) {

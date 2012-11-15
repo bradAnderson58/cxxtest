@@ -76,7 +76,7 @@ void doAssertEquals(const char *file, int line,
 template<class X, class Y, class Z>
 struct equalsTol {
     static bool test(X x, Y y, Z z) {
-        return (::abs(x - y) <= z);
+        return (::fabs(x - y) <= z);
     }
 };
  

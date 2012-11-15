@@ -132,8 +132,8 @@ public:
                                const char *xStr, const char *yStr, const char *zStr,
                                const char *x, const char *y, const char *z) {
         stop(file, line) << _errorString << ": Expected (" <<
-        xStr << " == " << yStr << " within " << zStr << "), found (" <<
-        x << " != " << y << " within " << z << ")" << endl;
+        xStr << " == " << yStr << " within tolerance " << zStr << "), found (" <<
+        x << " != " << y << " within tolerance " << z << ")" << endl;
     }
     
     void failedAssertSameData(const char *file, int line,

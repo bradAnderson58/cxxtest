@@ -73,10 +73,15 @@ void doAssertEquals(const char *file, int line,
 }
 
 // hacked together by David
+// http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm
 template<class X, class Y, class Z>
 struct equalsTol {
     static bool test(X x, Y y, Z z) {
-        return (::fabs(x - y) <= z);
+		x = ::fabs(x);
+		y = ::fabs(y);
+		if (::fabs(x - y) <= ((x > y) ? x : y)  * z)
+			return true;
+		return false;
     }
 };
  

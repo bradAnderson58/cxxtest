@@ -14,15 +14,15 @@ from os.path import expanduser
 def usageSummary(arg):
 	print "The cxxtest_cpp_update.py script can run with 0, 1, 2 or 3 inputs"
 	print
-	print "1st Arg: The name of the parent directory(not the full path) of the cxxtest framework is necessary to\
-	compile a new cpp file. It is assumed that the parent directory of the test framework is in one of the directories\
-	above the test path. cxxtest_cpp_update.py will search upwards from the test directory until it finds the directory name\
-	This is the directory of where you installed your cxxtest framework. If one is not defined the default will be \"third-party-libraries\""
+	print "1st Arg: The complete or relative path to the cxxtest\python directory in the cxxtest framework."
 	print
-	print "2nd Arg: The directory of the unit test header files and that of your destination cpp file. If this isn't defined it is \
-	assumed that the director of the python file is the directory of the headers and cpp file that need to be parsed"
+	print "2nd Arg (optional): The directory of the unit test header files and that of your destination cpp file. \
+	If this isn't defined it is assumed that the current working directory of the python execution is the directory \
+	of the headers and cpp file that need to be parsed. If you keep the cxxtest_cpp.update.py in the same directory \
+	as the header files you're about to parse then this argument isn't necessary"
 	print
-	print "3rd Arg: The prefix to the test file name: <prefix>_TestResults.xml. If left unused default is \"TestResults.xml\""
+	print "3rd Arg (optional): The prefix to the test file name: <prefix>_TestResults.xml. If left unused default is \
+	\"TestResults.xml\""
 
 count = 1
 test_path = ""
@@ -33,44 +33,40 @@ GENERIC_RESULTS_NAME = "TestResults.xml"
 GENERIC_CPP_NAME = "runner.cpp"
 CXXTESTGEN_FILENAME = "cxxtestgen"
 
-# define the name of the parent directory for the cxxtest framework
-cxx_parent_folder_name = THIRD_PARTY_LIBRARY_DIR_NAME
-if (len(sys.argv) > 1 and len(sys.argv[1]) > 0):
-	cxx_parent_folder_name = sys.argv[1]
-
 # define the directory of test header files that are to be used to create the tests
 test_path = os.getcwd()
 if (len(sys.argv) > 2 and len(sys.argv[2]) > 0):
 	test_path = sys.argv[2]
 
+# define the name of the parent directory for the cxxtest framework
+relative_path = ""
+cxx_path = ""
+if (len(sys.argv) > 1 and len(sys.argv[1]) > 0):
+	relative_path = sys.argv[1]
+else:
+	print
+	print "Script requires at least the input of the relative or complete path to the cxxtest\python directory"
+	sys.exit(-1)
+
+cxx_path = os.path.join(test_path, relative_path)
+print cxx_path
+print os.path.normpath(cxx_path)
+if (not os.path.exists(cxx_path)):
+	if (os.path.exists(relative_path)):
+		cxx_path = relative_path
+	else:
+		print "The path " + os.path.normpath(cxx_path) + " does not exist"
+		sys.exit(-1)
+
 # define a name for the test results
-xml_results_name = GENERIC_RESULTS_NAME #os.path.join(test_path,sys.argv[2] + "_TestResults.xml")
+xml_results_name = GENERIC_RESULTS_NAME
 if (len(sys.argv) > 3 and len(sys.argv[3]) > 0):
 	xml_results_name = sys.argv[3] + "_" + xml_results_name
 
-# find the directory for the cxxtest suit files
-base_directory = os.path.join(test_path, os.pardir)
-cxx_path = os.path.join(base_directory, cxx_parent_folder_name)
-while (os.path.exists(cxx_path) is False):
-	if (base_directory is expanduser("~")):
-		print "The folder " + cxx_parent_folder_name + " is not in any of the parent directories of your current cxx_setup.py execution directory."
-		print os.getcwd()
-		usageSummary()
-		sys.exit(-1)
-		
-	#print os.path.normpath(base_directory)
-	#print os.path.normpath(cxx_path)
-	base_directory = os.path.join(base_directory, os.pardir)
-	cxx_path = os.path.join(base_directory, cxx_parent_folder_name)
-
-#cxx_path = os.path.normpath(os.path.join(cxx_path, CXXTEST_DIR_NAME, PYTHON_DIR_NAME, CXXTESTGEN_FILENAME))
-cxx_path = os.path.normpath(os.path.join(cxx_path, CXXTEST_DIR_NAME, PYTHON_DIR_NAME))
-
 # collect all the header files for cxxtestgen
-test_path
 header_files = []
 for f in os.listdir(test_path):
-    if f.endswith('.h'):
+    if f.endswith('.h') or f.endswith('.hpp'):
         header_files.append(os.path.join(test_path, f))
 
 #define fullpath of cpp file
@@ -82,6 +78,7 @@ for header_file in header_files:
     arguments.append(' ')
     arguments.append(header_file)
 	
+print "cxxtestgen arguments"
 print arguments
 
 if sys.version_info >= (3, 0):

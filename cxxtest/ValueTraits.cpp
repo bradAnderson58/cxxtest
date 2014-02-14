@@ -13,6 +13,7 @@
 #define __cxxtest__ValueTraits_cpp__
 
 #include <cxxtest/ValueTraits.h>
+#include <string.h>
 
 namespace CxxTest {
 //
@@ -132,8 +133,10 @@ void ValueTraits<const double>::hugeNumber(double t) {
 void ValueTraits<const double>::normalNumber(double t) {
     char *s = doNegative(t);
     s = doubleToString(t, s);
+	int leftDigits = strlen(s);
+	int rightDigits = DIGITS_ON_RIGHT - leftDigits;
     s = copyString(s, ".");
-    for (unsigned i = 0; i < DIGITS_ON_RIGHT; ++ i) {
+	for (unsigned i = 0; i < rightDigits; ++i) {
         s = numberToString((unsigned)(t *= BASE) % BASE, s);
     }
 }

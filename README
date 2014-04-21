@@ -80,10 +80,10 @@ cxxtest_cpp.update.py file (comes with github cloning) and the relative path
 to the /cxxtest/python directory. Your relative path is with respect to the 
 vxproj project file of the unit tests(not the sln solution file). In 
 the "Command Line" field your call is going to look like the following:
-"call <path to cxxtest_cpp_update.py> <path to python directory in cxxtest clone> <path to your unit test project's source directory>
+"call <path to cxxtest_cpp_update.py> -c <path to python directory in cxxtest clone> -t <path to your unit test project's source directory>
 In order to be epic and a master of relative paths and visual studio macros
 your command line might be organized something like the following:
-"call $(ProjectDir)<relative path from VS project to cxxtest_cpp_update.py> $(ProjectDir)<relative path to to python directory in cxxtest clone> $(ProjectDir)"
+"call $(ProjectDir)<relative path from VS project to cxxtest_cpp_update.py> -c $(ProjectDir)<relative path to to python directory in cxxtest clone> -t $(ProjectDir)"
 
 for example my cxxtest_cpp_update.py file is in:
 C:\third-party-libraries\cxxtest
@@ -94,7 +94,7 @@ C:\myCompanyName\acronym\SoftwareProject\Library\UnitTests
 and my project header files are in:
 C:\myCompanyName\acronym\SoftwareProject\Library\UnitTests
 and my current directory "Command Line" is:
-call $(ProjectDir)..\..\..\..\..\third-party-libraries\cxxtest\cxxtest_cpp_update.py $(ProjectDir)..\..\..\..\..\third-party-libraries\cxxtest\python $(ProjectDir)
+call $(ProjectDir)..\..\..\..\..\third-party-libraries\cxxtest\cxxtest_cpp_update.py -c $(ProjectDir)..\..\..\..\..\third-party-libraries\cxxtest\python -t $(ProjectDir)
 
 Sometimes in visual studio when you create a project there is an option to
 have the source code one directory below the vxproj project file. In this 

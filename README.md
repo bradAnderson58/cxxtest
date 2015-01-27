@@ -22,74 +22,79 @@ A user guide is available in doc/guide.pdf.
 
 Python is a requirement.
 
-##General Setup Steps
-1. Clone the cxxtest code from github to your development machine. Be 
+##Installation
+CxxTest requires little to no installation. You must have python installed and in your command terminal's path. For Xcode development you need to add the following lines to your `~/.bash_profile`:
+```bash
+export CXXTEST_CPP_UPDATE="/<full path to repo>/cxxtest/cxxtest_cpp_update.py"
+export CXXTEST_PYTHON_DIR="/<full path to repo>/cxxtest/python"
+```
+
+##General Project Setup Steps
+Clone the cxxtest code from github to your development machine. Be 
 thoughtful about what directory it will live in. You might end up with a
 lot of projects that relying on the relative paths to your cxxtest repo not changing.
 
-##XCode setup
-2. After creating your C++ library project (our example project will be "LibraryUtils") in XCode add a target that is an `OSX`->`Application`->`Command Line Tool` target. It should be a C++ application. Give it some kind of unit testing name. Maybe "UnitTests" is too generic a name, but we'll use that for this sample. Take the `main.cpp` file and rename it `runner.cpp`
+###XCode setup
+After creating your C++ library project (our example project will be "LibraryUtils") in XCode add a target that is an `OSX`->`Application`->`Command Line Tool` target. It should be a C++ application. Give it some kind of unit testing name. Maybe "UnitTests" is too generic a name, but we'll use that for this sample. Take the `main.cpp` file and rename it `runner.cpp`
 
-3. Click the project settings icon in the Table of Contents (TOC) and change the target dropdown to point to "UnitTests". Click the `Build Settings` tab. Under `Build Settings` edit the `Header Search Paths` to include the cxxtest repo. Below is how my relative include path looks:
+Click the project settings icon in the Table of Contents (TOC) and change the target dropdown to point to "UnitTests". Click the `Build Settings` tab. Under `Build Settings` edit the `Header Search Paths` to include the cxxtest repo. Below is how my relative include path looks:
 ```
 $(SRCROOT)/../../../<some directory that is relative to your projects>/cxxtest
 ```
 
-4. Click the `Build Phases` tab next to the `Build Settings` tab. For `Target Dependencies` select the library you'll be testing. In our case we're selecting the `LibraryUtils(LibraryUtils)` library. If it has become unselected make sure that `runner.cpp` is present in the `Compile Sources` list. Under the `Link Binary With Libraries` make sure your library is selected. In our example that is `libLibraryUtils.dylib`
+Click the `Build Phases` tab next to the `Build Settings` tab. For `Target Dependencies` select the library you'll be testing. In our case we're selecting the `LibraryUtils(LibraryUtils)` library. If it has become unselected make sure that `runner.cpp` is present in the `Compile Sources` list. Under the `Link Binary With Libraries` make sure your library is selected. In our example that is `libLibraryUtils.dylib`
 
-5. There is a `+` sign near the top of the `Build Phases`. Use this to create a `New Run Script Phase`. Place your `Run Script` definition block right before the `Compile Sources` block. In your script block place the following code:
+There is a `+` sign near the top of the `Build Phases`. Use this to create a `New Run Script Phase`. Place your `Run Script` definition block right before the `Compile Sources` block. In your script block place the following code:
 ```bash
-CXXTEST_CPP_UPDATE="/<relative to your cxxtest repo>/cxxtest/cxxtest_cpp_update.py"
-CXXTEST_PYTHON_DIR="/<relative path to your cxxtest repo>/cxxtest/python"
-
+source ~/.bash_profile
 python $CXXTEST_CPP_UPDATE -c $CXXTEST_PYTHON_DIR -t $PROJECT_DIR/$TARGET_NAME
 ```
 
-##Visual Studio Setup
-2. To create a new unit test open Visual Studio and select File->New Project.
+###Visual Studio Setup
+To create a new unit test open Visual Studio and select File->New Project.
 For ease of development it is nice to have your unit tests in the same solution
 as your development project, so you can compile your changes and quickly run 
 your unit tests with the ability to step into your code from the unit test.
 
-3. In the "New Project" dialog there is a table of contents (TOC) on the left.
+In the "New Project" dialog there is a table of contents (TOC) on the left.
 Select "Templates"->"Visual C++"->"General" and you will see the option in 
 the window to select the "Empty Project" template. Name it something 
 spiffy like "UnitTests".
 
-4. In your "UnitTests" project create a cpp file named "runner.cpp". You can 
+In your "UnitTests" project create a cpp file named "runner.cpp". You can 
 leave this blank as it will be populated by the cxxtestgen scripts during the 
 pre-build steps. By creating the cpp file you will now be allowed to access 
 C++ configuration properties that might otherwise be unavailable(weird that 
 you create a c++ project and then have to create a cpp file to access 
 settings, but whatever).
 
-5. Right-click on the "UnitTests" in the "Solution Explorer" and from the 
+Right-click on the "UnitTests" in the "Solution Explorer" and from the 
 drop-down select "Properties". In the "Properties" TOC on the left expand 
 "Configuration Properties"->"General" and make sure that the "Target Extension"
 field is ".exe" and that the "Configuration Type" field is set to 
 "Application (.exe)"
 
-6. Still in the "Properties" TOC on the left expand "Configuration Properties"->"C/C++" 
+Still in the "Properties" TOC on the left expand "Configuration Properties"->"C/C++" 
 and then select "General". In the properties window on the right select the 
 "Additional Include Directories". Edit the include directories so that you've 
 included your top level "cxxtest" directory, your project's include directories 
 and any additional include directories.
 
-7. In the "Properties" TOC select "Configuration Properties"->"C/C++" and 
+In the "Properties" TOC select "Configuration Properties"->"C/C++" and 
 select "Preprocessor" to define any preprocessor variables necessary for your 
 project.
 
-8. In the "Properties" TOC select "Configuration Properties"->"Linker" and 
+In the "Properties" TOC select "Configuration Properties"->"Linker" and 
 select "General". In the properties window on the right select the "Additional 
 Library Directories" and point to the current build location for your project 
 that you'll be unit testing. If there are any additional libraries required
 for functionality of your library then include those as well.
 
-9. In the "Properties" TOC select "Configuration Properties"->"Linker" and 
+In the "Properties" TOC select "Configuration Properties"->"Linker" and 
 select "Input". In the properties window on the right select the "Additional 
 Dependencies" and your libraries to test and any additional libraries.
 
-10. In the "Properties" TOC select "Configuration Properties"->"Build Events" 
+In the "Properties" TOC select "Configuration Properties"->"Build Events" 
 and select "Pre-Build Event". As a Pre-Build command you are providing
 a Python call that is necessary in parsing your header files and updating
 your "runner.cpp" file. This requires knowing the path relative path to your

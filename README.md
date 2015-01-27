@@ -1,5 +1,5 @@
 Overview
---------
+=================
 CxxTest is a unit testing framework for C++ that is similar in
 spirit to JUnit, CppUnit, and xUnit. CxxTest is easy to use because
 it does not require precompiling a CxxTest testing library, it
@@ -20,15 +20,32 @@ CxxTest is available under the GNU Lesser General Public Licence (LGPL).
 
 A user guide is available in doc/guide.pdf.
 
-
 Python is a requirement.
 
-Visual Studio Setup
--------------------
+##General Setup Steps
 1. Clone the cxxtest code from github to your development machine. Be 
 thoughtful about what directory it will live in. You might end up with a
-lot of projects that relying on the relative paths to cxxtest not changing.
+lot of projects that relying on the relative paths to your cxxtest repo not changing.
 
+##XCode setup
+2. After creating your C++ library project (our example project will be "LibraryUtils") in XCode add a target that is an `OSX`->`Application`->`Command Line Tool` target. It should be a C++ application. Give it some kind of unit testing name. Maybe "UnitTests" is too generic a name, but we'll use that for this sample. Take the `main.cpp` file and rename it `runner.cpp`
+
+3. Click the project settings icon in the Table of Contents (TOC) and change the target dropdown to point to "UnitTests". Click the `Build Settings` tab. Under `Build Settings` edit the `Header Search Paths` to include the cxxtest repo. Below is how my relative include path looks:
+```
+$(SRCROOT)/../../../<some directory that is relative to your projects>/cxxtest
+```
+
+4. Click the `Build Phases` tab next to the `Build Settings` tab. For `Target Dependencies` select the library you'll be testing. In our case we're selecting the `LibraryUtils(LibraryUtils)` library. If it has become unselected make sure that `runner.cpp` is present in the `Compile Sources` list. Under the `Link Binary With Libraries` make sure your library is selected. In our example that is `libLibraryUtils.dylib`
+
+5. There is a `+` sign near the top of the `Build Phases`. Use this to create a `New Run Script Phase`. Place your `Run Script` definition block right before the `Compile Sources` block. In your script block place the following code:
+```bash
+CXXTEST_CPP_UPDATE="/<relative to your cxxtest repo>/cxxtest/cxxtest_cpp_update.py"
+CXXTEST_PYTHON_DIR="/<relative path to your cxxtest repo>/cxxtest/python"
+
+python $CXXTEST_CPP_UPDATE -c $CXXTEST_PYTHON_DIR -t $PROJECT_DIR/$TARGET_NAME
+```
+
+##Visual Studio Setup
 2. To create a new unit test open Visual Studio and select File->New Project.
 For ease of development it is nice to have your unit tests in the same solution
 as your development project, so you can compile your changes and quickly run 
@@ -116,12 +133,12 @@ Right-click on "UnitTests" in the "Solution Explorer" and in the
 drop-down select "Set As Startup Project"
 
 
-A Simple Example
-----------------
+## A Simple Example
 
 1. Create a test suite header file:
 
-MyTest.h:
+`MyTest.h:`
+``` cpp
   #include <cxxtest/TestSuite.h>
 
   class MyTestSuite : public CxxTest::TestSuite 
@@ -133,15 +150,16 @@ MyTest.h:
           TS_ASSERT_EQUALS( 1 + 1, 2 );
       }
   };
+```
 
-
-2. Generate the tests file:
-
- # cxxtestgen --error-printer -o tests.cpp MyTestSuite.h
+2. Generate the tests file (or use the above visual studio or xcode scripts described above to generate tests):
+``` bash
+cxxtestgen --error-printer -o tests.cpp MyTestSuite.h
+```
 
 3. Compile and run!
-
-  # g++ -o main tests.cpp
-  # ./main
-  Running 1 test(s).OK!
-
+``` bash
+g++ -o main tests.cpp
+./main
+Running 1 test(s).OK!
+```

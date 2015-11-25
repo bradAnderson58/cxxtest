@@ -39,8 +39,13 @@ After creating your C++ library project (our example project will be "LibraryUti
 
 Click the project settings icon in the Table of Contents (TOC) and change the target dropdown to point to "UnitTests". Click the `Build Settings` tab. Under `Build Settings` edit the `Header Search Paths` to include the cxxtest repo. Below is how my relative include path looks:
 ```
+$(SRCROOT)/../../../<some directory that is relative to your projects>/cxxtest
+```
+Your path SHOULD NOT look like:
+```
 $(SRCROOT)/../../../<some directory that is relative to your projects>/cxxtest/cxxtest
 ```
+
 
 Click the `Build Phases` tab next to the `Build Settings` tab. For `Target Dependencies` select the library you'll be testing. In our case we're selecting the `LibraryUtils(LibraryUtils)` library. If it has become unselected make sure that `runner.cpp` is present in the `Compile Sources` list. Under the `Link Binary With Libraries` make sure your library is selected. In our example that is `libLibraryUtils.dylib`
 

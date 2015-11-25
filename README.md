@@ -39,7 +39,7 @@ After creating your C++ library project (our example project will be "LibraryUti
 
 Click the project settings icon in the Table of Contents (TOC) and change the target dropdown to point to "UnitTests". Click the `Build Settings` tab. Under `Build Settings` edit the `Header Search Paths` to include the cxxtest repo. Below is how my relative include path looks:
 ```
-$(SRCROOT)/../../../<some directory that is relative to your projects>/cxxtest
+$(SRCROOT)/../../../<some directory that is relative to your projects>/cxxtest/cxxtest
 ```
 
 Click the `Build Phases` tab next to the `Build Settings` tab. For `Target Dependencies` select the library you'll be testing. In our case we're selecting the `LibraryUtils(LibraryUtils)` library. If it has become unselected make sure that `runner.cpp` is present in the `Compile Sources` list. Under the `Link Binary With Libraries` make sure your library is selected. In our example that is `libLibraryUtils.dylib`
@@ -49,6 +49,8 @@ There is a `+` sign near the top of the `Build Phases`. Use this to create a `Ne
 source ~/.bash_profile
 python $CXXTEST_CPP_UPDATE -c $CXXTEST_PYTHON_DIR -t $PROJECT_DIR/$TARGET_NAME
 ```
+
+If you build right now without any tests you will get a build error as the script requires that there be some test files.
 
 ###Visual Studio Setup
 To create a new unit test open Visual Studio and select File->New Project.

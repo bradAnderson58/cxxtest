@@ -32,7 +32,7 @@ def usage():
     
 
 shortargs='c:t:s:p:h'
-longargs = ['cxx_path=','test_path=', '--source_name', 'prefix=', 'help']   
+longargs = ['cxx_path=','test_path=', 'source_name=', 'prefix=', 'help']   
 
 def get_input_args():
     

@@ -50,7 +50,7 @@ def get_input_args():
                 cxx_path = a
             elif o in ('-t', '--test_path'):
                 test_path.append(a)
-            elif o in ('-t', '--source_name'):
+            elif o in ('-s', '--source_name'):
                 source_file = a
             elif o in ('-p', '--prefix'):
                 prefix = a
@@ -90,7 +90,7 @@ def main():
 
     # define the directory of test header files that are to be used to create the tests
     if len(test_path) == 0:
-        test_path.append(s.getcwd())
+        test_path.append(os.getcwd())
 
     # define the name of the parent directory for the cxxtest framework
     relative_path = ""

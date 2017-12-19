@@ -15,7 +15,7 @@ from os.path import expanduser
 def usage():
     input_summmary =    "The cxxtest_cpp_update.py script can run with 0, 1, 2 or 3 inputs"
     cxx_path_usage =    "    -c,    --cxx_path=        The complete or relative path to the cxxtest\python directory in the cxxtest framework."
-    test_path_usage =   "    -t,    --test_path=       The directory of the unit test header files and that of your destination cpp file. \
+    test_path_usage =   "    -t,    --test_path=       The directory[ies] of the unit test header files and that of your destination cpp file. \
                         If this isn't defined it is assumed that the current working directory of the python execution is the directory \
                         of the headers and cpp file that need to be parsed. If you keep the cxxtest_cpp.update.py in the same directory \
                         as the header files you're about to parse then this argument isn't necessary"
@@ -36,7 +36,7 @@ def get_input_args():
     
     # roar
     cxx_path = ''
-    test_path = ''
+    test_path = []
     prefix = ''
     try:
         #parse it chihuahua breath
@@ -46,7 +46,7 @@ def get_input_args():
             if o in ('-c', '--cxx_path'):
                 cxx_path = a
             elif o in ('-t', '--test_path'):
-                test_path = a
+                test_path.append(a)
             elif o in ('-p', '--prefix'):
                 prefix = a
             elif o in ('-h', '--help'):
@@ -59,6 +59,14 @@ def get_input_args():
         
     return cxx_path, test_path, prefix
     
+def findAllHeadersInPaths(test_path):
+    header_files = []
+    for path in test_path:
+        for file in os.listdir(path):
+            if file.endswith('.h') or file.endswith('.hpp'):
+                header_files.append(os.path.join(path, file))
+
+    return header_files
     
 def main():
     
@@ -74,7 +82,7 @@ def main():
 
     # define the directory of test header files that are to be used to create the tests
     if len(test_path) == 0:
-        test_path = os.getcwd()
+        test_path.append(s.getcwd())
 
     # define the name of the parent directory for the cxxtest framework
     relative_path = ""
@@ -96,13 +104,10 @@ def main():
         xml_results_name = prefix + "_" + GENERIC_RESULTS_NAME
     
     # collect all the header files for cxxtestgen
-    header_files = []
-    for f in os.listdir(test_path):
-        if f.endswith('.h') or f.endswith('.hpp'):
-            header_files.append(os.path.join(test_path, f))
+    header_files = findAllHeadersInPaths(test_path)
     
     #define fullpath of cpp file
-    runner_file = os.path.join(test_path, GENERIC_CPP_NAME)
+    runner_file = os.path.join(test_path[0], GENERIC_CPP_NAME)
     
     # prep arguments for command line
     arguments = [os.path.join(cxx_path, 'cxxtestgen'), '--xunit-printer', '--xunit-file', xml_results_name, '-o', runner_file]

@@ -19,6 +19,7 @@ def usage():
                         If this isn't defined it is assumed that the current working directory of the python execution is the directory \
                         of the headers and cpp file that need to be parsed. If you keep the cxxtest_cpp.update.py in the same directory \
                         as the header files you're about to parse then this argument isn't necessary"
+    source_file_usage = "    -s,    --source_name=     The preferred name of the source file.  If none is supplied, default will be \"runner.cpp\""
     prefix_usage =      "    -p,    --prefix=          The prefix to the test file name: <prefix>_TestResults.xml. If left unused default is \
                         \"TestResults.xml\""
 
@@ -26,11 +27,12 @@ def usage():
     print()
     print(cxx_path_usage)
     print(test_path_usage)
+    print(source_file_usage)
     print(prefix_usage)
     
 
-shortargs='c:t:p:h'
-longargs = ['cxx_path=','test_path=', 'prefix=', 'help']   
+shortargs='c:t:s:p:h'
+longargs = ['cxx_path=','test_path=', '--source_name', 'prefix=', 'help']   
 
 def get_input_args():
     
@@ -38,6 +40,7 @@ def get_input_args():
     cxx_path = ''
     test_path = []
     prefix = ''
+    source_file = ''
     try:
         #parse it chihuahua breath
         opts, args = getopt.getopt(os.sys.argv[1:], shortargs, longargs)
@@ -47,6 +50,8 @@ def get_input_args():
                 cxx_path = a
             elif o in ('-t', '--test_path'):
                 test_path.append(a)
+            elif o in ('-t', '--source_name'):
+                source_file = a
             elif o in ('-p', '--prefix'):
                 prefix = a
             elif o in ('-h', '--help'):
@@ -57,7 +62,7 @@ def get_input_args():
         usage()
         os.sys.exit()
         
-    return cxx_path, test_path, prefix
+    return cxx_path, test_path, source_file, prefix
     
 def findAllHeadersInPaths(test_path):
     header_files = []
@@ -67,10 +72,13 @@ def findAllHeadersInPaths(test_path):
                 header_files.append(os.path.join(path, file))
 
     return header_files
+
+def defaultIfEmpty(value, default_value):
+    return value if value != '' else default_value 
     
 def main():
     
-    cxx_path, test_path, prefix = get_input_args()
+    cxx_path, test_path, source_file, prefix = get_input_args()
     count = 1
     
     CXXTEST_DIR_NAME = "cxxtest"
@@ -107,7 +115,7 @@ def main():
     header_files = findAllHeadersInPaths(test_path)
     
     #define fullpath of cpp file
-    runner_file = os.path.join(test_path[0], GENERIC_CPP_NAME)
+    runner_file = os.path.join(test_path[0], defaultIfEmpty(source_file, GENERIC_CPP_NAME))
     
     # prep arguments for command line
     arguments = [os.path.join(cxx_path, 'cxxtestgen'), '--xunit-printer', '--xunit-file', xml_results_name, '-o', runner_file]
